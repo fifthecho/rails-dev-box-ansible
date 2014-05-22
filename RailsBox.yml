@@ -84,7 +84,7 @@
       service: name=mysqld state=stopped
 
     - name: Stop PostgreSQL
-      service: name=postgresql93-server state=stopped
+      service: name=postgresql-9.3 state=stopped
 
     - name: Stop Redis
       service: name=redis state=stopped
