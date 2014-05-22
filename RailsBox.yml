@@ -1,0 +1,69 @@
+---
+- hosts: all
+  sudo: yes
+  tasks:
+
+  - name: Install EPEL Repo for RHEL 6
+    yum: name=http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm state=present
+
+  - name: Install MySQL repo for RHEL 6
+    yum: name=http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm state=present
+
+  - name: Install PostgreSQL repo for RHEL 6
+    yum: name=http://yum.postgresql.org/9.3/redhat/rhel-6-x86_64/pgdg-redhat93-9.3-1.noarch.rpm state=present
+
+  - name: Install MySQL 5.6 Server
+    yum: name=mysql-server state=latest
+
+  - name: Install MySQL Python Modules
+    yum: name=MySQL-python state=latest
+
+  - name: Start MySQL Database
+    service: name=mysqld state=started enabled=yes
+
+  - name: Install PostgreSQL 9.3
+    yum: name=postgresql93-server state=latest
+
+  - name: Install PostgreSQL Python Modules
+    yum: name=python-psycopg2 state=latest
+
+  - name: Initialize PostgreSQL Database
+    command: service postgresql-9.3 initdb
+    ignore_errors: True
+
+  - name: Start PostgreSQL Database
+    service: name=postgresql-9.3 state=started enabled=yes
+
+  - name: Install Memcached
+    yum: name=memcached state=latest
+
+  - name: Install curl
+    yum: name=curl state=latest
+
+  - name: Install git
+    yum: name=git state=latest
+
+  - name: Install node.js
+    yum: name=nodejs state=latest
+
+  - name: Install NPM
+    yum: name=npm state=latest
+
+  - name: Setup system gemrc
+    shell: "echo gem: --no-ri --no-rdoc > /etc/gemrc"
+
+  - name: Install RVM
+    shell: "curl -L https://get.rvm.io | bash -s stable --autolibs=enabled --ruby --rails"
+
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: Setup rails MySQL user
+      mysql_user: name=rails password=rails priv=*.*:ALL state=present
+
+- hosts: all
+  sudo: yes
+  sudo_user: postgres
+  tasks:
+  - name: Setup rails PostgreSQL user
+    postgresql_user: name=rails password=rails role_attr_flags=CREATEDB,SUPERUSER state=present
