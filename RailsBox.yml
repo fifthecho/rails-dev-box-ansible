@@ -37,6 +37,15 @@
   - name: Install Memcached
     yum: name=memcached state=latest
 
+  - name: Start Memcached
+    service: name=memcached state=started enabled=yes
+
+  - name: Install Redis
+    yum: name=redis state=latest
+
+  - name: Start Redis
+    service: name=redis state=started enabled=yes
+
   - name: Install curl
     yum: name=curl state=latest
 
@@ -67,3 +76,15 @@
   tasks:
   - name: Setup rails PostgreSQL user
     postgresql_user: name=rails password=rails role_attr_flags=CREATEDB,SUPERUSER state=present
+
+- hosts: all
+  sudo: yes
+  tasks:
+    - name: Stop MySQL
+      service: name=mysqld state=stopped
+
+    - name: Stop PostgreSQL
+      service: name=postgresql93-server state=stopped
+
+    - name: Stop Redis
+      service: name=redis state=stopped
